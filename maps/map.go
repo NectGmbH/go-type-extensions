@@ -1,5 +1,8 @@
+// Package maps implements a couple of helpful iteration operations on generic maps.
 package maps
 
+// ToSingleton chooses a random element of the map.
+// If the map is empty it returns the zero value for the maps respective types.
 func ToSingleton[TKey comparable, TElem any](m map[TKey]TElem) (TKey, TElem) {
 	for key, elem := range m {
 		return key, elem
@@ -8,6 +11,7 @@ func ToSingleton[TKey comparable, TElem any](m map[TKey]TElem) (TKey, TElem) {
 	return *new(TKey), *new(TElem)
 }
 
+// Filter reduces m to a new map of all elements for which predicate evaluates to true.
 func Filter[TKey comparable, TElem any](
 	m map[TKey]TElem,
 	predicate func(TKey, TElem) bool,
@@ -22,6 +26,7 @@ func Filter[TKey comparable, TElem any](
 	return reducedMap
 }
 
+// Map projects m into a new map using fn as the projection function for every key and element.
 func Map[TKey, TNewKey comparable, TElem, TNewElem any](
 	m map[TKey]TElem,
 	fn func(TKey, TElem) (TNewKey, TNewElem),
@@ -35,13 +40,16 @@ func Map[TKey, TNewKey comparable, TElem, TNewElem any](
 	return reducedMap
 }
 
+// Fold executes a fold operation on m seeding the result for the first iteration with
+// initialResult.
 func Fold[TKey comparable, TElem, TResult any](
 	m map[TKey]TElem,
+	initialResult TResult,
 	fn func(TResult, TKey, TElem) (TResult, error),
 ) (TResult, error) {
 	var (
 		err    error
-		result TResult
+		result = initialResult
 	)
 
 	for key, elem := range m {
@@ -54,6 +62,7 @@ func Fold[TKey comparable, TElem, TResult any](
 	return result, err
 }
 
+// ToSlice returns a slice of all values in m in random order.
 func ToSlice[TKey comparable, TElem any](m map[TKey]TElem) []TElem {
 	sl := make([]TElem, 0, len(m))
 
@@ -64,6 +73,13 @@ func ToSlice[TKey comparable, TElem any](m map[TKey]TElem) []TElem {
 	return sl
 }
 
+// Values is an alias for ToSlice.
+// It returns a slice of all values in m in random order.
+func Values[TKey comparable, TElem any](m map[TKey]TElem) []TElem {
+	return ToSlice(m)
+}
+
+// Keys returns a slice of all keys in m in random order.
 func Keys[TKey comparable, TElem any](m map[TKey]TElem) []TKey {
 	sl := make([]TKey, 0, len(m))
 
