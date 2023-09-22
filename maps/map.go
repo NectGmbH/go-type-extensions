@@ -89,3 +89,23 @@ func Keys[TKey comparable, TElem any](m map[TKey]TElem) []TKey {
 
 	return sl
 }
+
+// Union returns m1 with all elements and keys of m2 added.
+// This includes overwriting elements from m1 with m2 on key collisions.
+func Union[TKey comparable, TElem any](m1 map[TKey]TElem, m2 map[TKey]TElem) map[TKey]TElem {
+	for k, v := range m2 {
+		m1[k] = v
+	}
+	return m1
+}
+
+// Intersect returns a new map with all elements from m2 where their key is also in m1.
+func Intersect[TKey comparable, TElem any](m1 map[TKey]TElem, m2 map[TKey]TElem) map[TKey]TElem {
+	intersection := make(map[TKey]TElem)
+	for k, v := range m2 {
+		if _, hasKey := m1[k]; hasKey {
+			intersection[k] = v
+		}
+	}
+	return intersection
+}
